@@ -1,0 +1,26 @@
+{
+  "name": "yweb-components",
+  "version": "0.0.1",
+  "description": "Web Components for Web",
+  "keywords": [
+    "components",
+    "web",
+    "ui",
+    "web-components"
+  ],
+  "homepage": "https://github.com/Yrds/yweb-components#readme",
+  "bugs": {
+    "url": "https://github.com/Yrds/yweb-components/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yrds/yweb-components.git"
+  },
+  "license": "MIT",
+  "author": "Yuri dos Santos",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
