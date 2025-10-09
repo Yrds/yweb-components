@@ -14,7 +14,7 @@ You can use it through a cdn like jsdelivr.
 <html>
 </html>
 <body>
-<script type="module" src="https://cdn.jsdelivr.net/npm/@yrds/yweb-components@0.0.1/src/components/snack-bar/main.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@yrds/yweb-components@latest/src/components/snack-bar/main.js"></script>
 <snack-bar id="my-snack-bar"></snack-bar>
 
 <script>
