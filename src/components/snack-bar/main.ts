@@ -1,8 +1,10 @@
 class SnackBarElement extends HTMLElement {
+  private _timeout: ReturnType<typeof setTimeout> | null = null;
+
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
-    this.shadowRoot.innerHTML = `
+    const shadowRoot = this.attachShadow({ mode: 'open' });
+    shadowRoot.innerHTML = `
       <style>
         .container {
           position: fixed;
@@ -27,17 +29,17 @@ class SnackBarElement extends HTMLElement {
     `;
   }
 
-  #getContainer() {
-    return this.shadowRoot.querySelector('.container');
+  getContainer(): Element {
+    return this.shadowRoot!.querySelector('.container')!;
   }
 
-  open(message, duration = 3000) {
-    const container = this.#getContainer();
+  open(message: string, duration: number = 3000) {
+    const container = this.getContainer();
     container.textContent = message;
     container.classList.add('show');
 
     if (this._timeout) {
-      clearTimeout(this._timeout);
+      clearTimeout(this?._timeout);
     }
 
     this._timeout = setTimeout(() => {
@@ -46,9 +48,9 @@ class SnackBarElement extends HTMLElement {
   }
 
   close() {
-    const container = this.#getContainer();
+    const container = this.getContainer();
     container.classList.remove('show');
   }
 }
 
-customElements.define('snack-bar', SnackBarElement);
+customElements.define('y-snack-bar', SnackBarElement);
