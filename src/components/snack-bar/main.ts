@@ -1,10 +1,46 @@
+export const SNACK_BAR_TAG = 'y-snack-bar';
+
+class SnackBarProps {
+  duration?: number = undefined;
+  open: boolean = false;
+}
+
+type PropEventSource<Type> = {
+    on<Key extends string & keyof Type>
+        (eventName: `${Key}Changed`, callback: (newValue: Type[Key]) => void): void;
+};
+
+class Observer<Type> {
+  on<Key extends string & keyof Type>
+  (eventName: `${Key}Changed`, callback: (newValue: Type[Key]) => void): void {
+    // TODO (yuri): Implement event listener registration
+  }
+  log(...args: any[]) {
+    console.log(...args);
+  }
+}
+
+function makeObserver<Type>(): Type & Observer<Type> {
+  return new Observer<Type>() as Type & Observer<Type>;
+};
+
+
 class SnackBarElement extends HTMLElement {
   private _timeout: ReturnType<typeof setTimeout> | null = null;
 
+  observer = makeObserver<SnackBarProps>();
+
+  static get observedAttributes() {
+    const propsKeys = Object.getOwnPropertyNames(new SnackBarProps());
+    console.log('observedAttributes', propsKeys);
+    return propsKeys;
+  }
+
   constructor() {
+    console.log('SnackBarElement constructor');
     super();
-    const shadowRoot = this.attachShadow({ mode: 'open' });
-    shadowRoot.innerHTML = `
+    //const shadowRoot = this.attachShadow({ mode: 'open' });
+    this.innerHTML = `
       <style>
         .container {
           position: fixed;
@@ -25,12 +61,16 @@ class SnackBarElement extends HTMLElement {
           pointer-events: auto;
         }
       </style>
-      <div class="container"></div>
+      <div class="container">${this.innerHTML}</div>
     `;
+
+    this.observer.on('openChanged', (newProps) => {
+      console.log('Props changed:', newProps);
+    });
   }
 
   getContainer(): Element {
-    return this.shadowRoot!.querySelector('.container')!;
+    return this.querySelector('.container')!;
   }
 
   open(message: string, duration: number = 3000) {
@@ -51,6 +91,20 @@ class SnackBarElement extends HTMLElement {
     const container = this.getContainer();
     container.classList.remove('show');
   }
+
+  attributeChangedCallback(name: string, oldValue: any, newValue: any) {
+    // TODO (yuri): This is not working yet
+    this.observer.log('attributeChangedCallback', { name, oldValue, newValue });
+  }
 }
 
-customElements.define('y-snack-bar', SnackBarElement);
+export function open(message: string, duration?: number) {
+  let snackBar = document.querySelector(SNACK_BAR_TAG) as SnackBarElement | null;
+  if (!snackBar) {
+    snackBar = document.createElement(SNACK_BAR_TAG) as SnackBarElement;
+    document.body.appendChild(snackBar);
+  }
+  snackBar.open(message, duration);
+}
+
+customElements.define(SNACK_BAR_TAG, SnackBarElement);
