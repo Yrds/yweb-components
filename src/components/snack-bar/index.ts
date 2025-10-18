@@ -40,6 +40,12 @@ class SnackBarElement extends HTMLElement {
     console.log('SnackBarElement constructor');
     super();
     //const shadowRoot = this.attachShadow({ mode: 'open' });
+    // TODO (yuri): I want to split this in two different components
+    // - the container which will be created once (this component)
+    // - the message which will be created each time open() is called (y-snack-bar-message)
+    //
+    // The container will handle the animation in and out
+    // The message will be created and destroyed each time
     this.innerHTML = `
       <style>
         .container {
