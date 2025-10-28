@@ -18,8 +18,10 @@
   <body>
     <div id="app"></div>
 
-    <y-snack-bar id="snack-bar" open="true" class="snack-style">
-      <template>This is a snackbar message!</template>
+    <y-snack-bar id="snack-bar">
+      <template id="snack-content">
+        <span>This is a snackbar message!</span>
+      </template>
     </y-snack-bar>
 
     <button id="open-snackbar" onclick="document.getElementById('snack-bar').open()">Open Snackbar</button>

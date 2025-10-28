@@ -1,4 +1,5 @@
 export const SNACK_BAR_TAG = 'y-snack-bar';
+export const SNACK_CONTAINER_TAG = 'y-snack-container';
 
 class SnackBarProps {
   duration?: number = undefined;
@@ -36,17 +37,15 @@ class SnackBarElement extends HTMLElement {
     return propsKeys;
   }
 
-  constructor() {
-    console.log('SnackBarElement constructor');
-    super();
-    //const shadowRoot = this.attachShadow({ mode: 'open' });
-    // TODO (yuri): I want to split this in two different components
-    // - the container which will be created once (this component)
-    // - the message which will be created each time open() is called (y-snack-bar-message)
-    //
-    // The container will handle the animation in and out
-    // The message will be created and destroyed each time
-    this.innerHTML = `
+  getSnackContainer() {
+    return document.body.querySelector(SNACK_CONTAINER_TAG)
+      ?? this.createSnackContainer();
+  }
+
+  createSnackContainer() {
+    const container = document.createElement(SNACK_CONTAINER_TAG);
+
+    container.innerHTML = `
       <style>
         .container {
           position: fixed;
@@ -67,34 +66,41 @@ class SnackBarElement extends HTMLElement {
           pointer-events: auto;
         }
       </style>
-      <div class="container">${this.innerHTML}</div>
+      <div class="content"></div>
     `;
 
-    this.observer.on('openChanged', (newProps) => {
-      console.log('Props changed:', newProps);
-    });
+    //container.attachShadow({ mode: 'open' });
+
+    document.body.appendChild(container);
+    return container;
   }
 
-  getContainer(): Element {
-    return this.querySelector('.container')!;
+  constructor() {
+    super();
+    //const shadowRoot = this.attachShadow({ mode: 'open' });
+    // TODO (yuri): I want to split this in two different components
+    // - the container which will be created once (this component)
+    // - the message which will be created each time open() is called (y-snack-bar-message)
+    //
+    // The container will handle the animation in and out
+    // The message will be created and destroyed each time
+  }
+  getContent() {
+    return this.querySelector<HTMLTemplateElement>('#snack-content');
   }
 
-  open(message: string, duration: number = 3000) {
-    const container = this.getContainer();
-    container.textContent = message;
-    container.classList.add('show');
+  open(duration: number = 3000) {
+    const container = this.getSnackContainer();
 
-    if (this._timeout) {
-      clearTimeout(this?._timeout);
-    }
+    const content = this.getContent().content;
 
-    this._timeout = setTimeout(() => {
-      this.close();
-    }, duration);
+    container.querySelector('.content')
+      //.shadowRoot
+      .appendChild(content.cloneNode(true));
   }
 
   close() {
-    const container = this.getContainer();
+    const container = this.getSnackContainer();
     container.classList.remove('show');
   }
 
@@ -110,7 +116,7 @@ export function open(message: string, duration?: number) {
     snackBar = document.createElement(SNACK_BAR_TAG) as SnackBarElement;
     document.body.appendChild(snackBar);
   }
-  snackBar.open(message, duration);
+  snackBar.open(duration);
 }
 
 customElements.define(SNACK_BAR_TAG, SnackBarElement);
